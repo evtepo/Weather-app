@@ -10,6 +10,14 @@ class UserCreate(UserBase):
     password: str
 
 
+class UserLite(BaseModel):
+    username: str
+    role_id: int
+
+    class Config:
+        orm_mode = True
+
+
 class User(UserBase):
     role_id: int
 
