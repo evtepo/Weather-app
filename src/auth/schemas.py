@@ -12,13 +12,13 @@ class UserCreate(UserBase):
 
 class UserLite(BaseModel):
     username: str
-    role_id: int
 
     class Config:
         orm_mode = True
 
 
 class User(UserBase):
+    id: int
     role_id: int
 
     class Config:

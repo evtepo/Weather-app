@@ -9,8 +9,8 @@ class User(Base):
     __tablename__ = 'user'
 
     id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, nullable=False)
-    email = Column(String, nullable=False, index=True)
+    username = Column(String, nullable=False, unique=True)
+    email = Column(String, nullable=False, index=True, unique=True)
     password = Column(String, nullable=False)
     role_id = Column(Integer, ForeignKey('role.id'))
 
@@ -21,7 +21,7 @@ class Role(Base):
     __tablename__ = 'role'
 
     id = Column(Integer, primary_key=True, index=True)
-    name = Column(String, nullable=False)
+    name = Column(String, nullable=False, unique=True)
     permissions = Column(JSONB, nullable=False)
 
     users = relationship('User', back_populates='roles')
