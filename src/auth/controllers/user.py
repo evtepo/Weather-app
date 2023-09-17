@@ -9,7 +9,7 @@ from auth.schemas import UserCreate
 from ..secure.hp import pwd_context
 
 
-def meta_user(id: int, db: Session):
+async def meta_user(id: int, db: Session):
     user = db.query(User).get(id)
     if not user:
         raise HTTPException(
@@ -20,25 +20,38 @@ def meta_user(id: int, db: Session):
     return user
 
 
-def get_user_by_name(db: Session, data: str):
-    user = db.query(User).filter(User.username == data).join(
-        Role, Role.id == User.role_id).first()
+async def get_users(db: Session):
+    users = db.query(User, Role).join(Role).all()
+    if users:
+        for i in range(len(users)):
+            user = users[i]
+            role = user[1]
+            user = user[0]
+            user.role = role
+            users[i] = user
+
+    return users
+
+
+async def get_user_by_name(db: Session, data: str):
+    user = db.query(User, Role).join(Role).filter(
+        User.username == data).first()
     if not user:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
             detail="User does not exists"
         )
 
+    if len(user) > 1:
+        role = user[1]
+        user = user[0]
+
+    user.role = role
+
     return user
 
 
-def get_users(db: Session):
-    return db.query(User).all()
-
-# Output all users
-
-
-def register(db: Session, user_data: UserCreate):
+async def register(db: Session, user_data: UserCreate):
     if db.query(User).filter(or_(
             User.email == user_data.email,
             User.username == user_data.username)).first():
@@ -59,8 +72,8 @@ def register(db: Session, user_data: UserCreate):
     return user
 
 
-def delete_user(db: Session, id: int):
-    user = meta_user(db=db, id=id)
+async def delete_user(db: Session, id: int):
+    user = await meta_user(db=db, id=id)
     db.delete(user)
     db.commit()
 
@@ -71,8 +84,8 @@ def delete_user(db: Session, id: int):
     }
 
 
-def change_name(db: Session, id: int, new_name: str):
-    user = meta_user(db=db, id=id)
+async def change_name(db: Session, id: int, new_name: str):
+    user = await meta_user(db=db, id=id)
     user.username = new_name
     db.commit()
 
@@ -83,8 +96,8 @@ def change_name(db: Session, id: int, new_name: str):
     }
 
 
-def change_email(id: int, email: EmailStr, db: Session):
-    user = meta_user(id=id, db=db)
+async def change_email(id: int, email: EmailStr, db: Session):
+    user = await meta_user(id=id, db=db)
     user.email = email
     db.commit()
 
@@ -93,3 +106,4 @@ def change_email(id: int, email: EmailStr, db: Session):
             "OK": "Email updated successfully",
         },
     }
+
