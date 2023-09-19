@@ -12,7 +12,7 @@ class User(Base):
     username = Column(String, nullable=False, unique=True)
     email = Column(String, nullable=False, index=True, unique=True)
     password = Column(String, nullable=False)
-    role_id = Column(Integer, ForeignKey('role.id'))
+    role_id = Column(Integer, ForeignKey('role.id'), default=3)
 
     roles = relationship('Role', back_populates='users')
 

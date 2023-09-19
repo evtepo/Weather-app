@@ -1,6 +1,11 @@
 from pydantic import BaseModel, EmailStr, Json
 
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
 class Role(BaseModel):
     id: int
     name: str

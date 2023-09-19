@@ -6,7 +6,10 @@ from sqlalchemy import or_
 
 from auth.models import User, Role
 from auth.schemas import UserCreate
-from ..secure.hp import pwd_context
+from ..secure.hp import get_hashed_password
+from config import (
+    SECREY_KEY, ALGORITHM, ACCESS_TOKEN_EXPIRE_MINUTES
+)
 
 
 async def meta_user(id: int, db: Session):
@@ -20,6 +23,7 @@ async def meta_user(id: int, db: Session):
     return user
 
 
+# Basic user operations
 async def get_users(db: Session):
     users = db.query(User, Role).join(Role).all()
     if users:
@@ -33,13 +37,13 @@ async def get_users(db: Session):
     return users
 
 
-async def get_user_by_name(db: Session, data: str):
+async def get_user_by_name(data: str, db: Session):
     user = db.query(User, Role).join(Role).filter(
         User.username == data).first()
     if not user:
         raise HTTPException(
             status_code=HTTP_400_BAD_REQUEST,
-            detail="User does not exists"
+            detail="User does not exists."
         )
 
     if len(user) > 1:
@@ -51,7 +55,7 @@ async def get_user_by_name(db: Session, data: str):
     return user
 
 
-async def register(db: Session, user_data: UserCreate):
+async def register(user_data: UserCreate, db: Session):
     if db.query(User).filter(or_(
             User.email == user_data.email,
             User.username == user_data.username)).first():
@@ -63,7 +67,7 @@ async def register(db: Session, user_data: UserCreate):
     user = User(
         username=user_data.username,
         email=user_data.email,
-        password=pwd_context.hash(user_data.password),
+        password=get_hashed_password(user_data.password),
         role_id=3
     )
     db.add(user)
@@ -72,26 +76,26 @@ async def register(db: Session, user_data: UserCreate):
     return user
 
 
-async def delete_user(db: Session, id: int):
+async def delete_user(id: int, db: Session):
     user = await meta_user(db=db, id=id)
     db.delete(user)
     db.commit()
 
     return {
         "Status": {
-            "OK": "User deleted",
+            "OK": "User deleted.",
         },
     }
 
 
-async def change_name(db: Session, id: int, new_name: str):
+async def change_name(id: int, new_name: str, db: Session):
     user = await meta_user(db=db, id=id)
     user.username = new_name
     db.commit()
 
     return {
         "Status": {
-            "OK": "Username updated successfully",
+            "OK": "Username updated successfully.",
         },
     }
 
@@ -103,7 +107,6 @@ async def change_email(id: int, email: EmailStr, db: Session):
 
     return {
         "Status": {
-            "OK": "Email updated successfully",
+            "OK": "Email updated successfully.",
         },
     }
-

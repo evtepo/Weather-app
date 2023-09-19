@@ -16,6 +16,7 @@ router = APIRouter(
     tags=['Auth']
 )
 
+
 @router.get('/all_users', response_model=List[schemas.UserFull], status_code=201)
 async def get_all_users(db: Session = Depends(get_db)):
     return await get_users(db=db)
