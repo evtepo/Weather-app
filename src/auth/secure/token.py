@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from typing import Optional
-from jose import JWTError, jwt
+from jose import jwt
 
 from config import (
     ACCESS_TOKEN_EXPIRE_MINUTES, SECREY_KEY, ALGORITHM

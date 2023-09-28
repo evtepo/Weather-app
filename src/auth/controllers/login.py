@@ -1,4 +1,3 @@
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
@@ -7,13 +6,13 @@ from starlette.status import HTTP_400_BAD_REQUEST, HTTP_401_UNAUTHORIZED
 from datetime import timedelta
 
 from database import get_db
-from .user import get_user_by_name
-from ..secure.token import create_access_token
-from ..secure.hp import verify_password
-from ..models import User
+
+from auth.secure.token import create_access_token
+from auth.secure.hp import verify_password
+from auth.models import Role, User
 
 from config import (
-    ACCESS_TOKEN_EXPIRE_MINUTES, SECREY_KEY, ALGORITHM
+    ACCESS_TOKEN_EXPIRE_MINUTES, SECREY_KEY, ALGORITHM, oauth2_scheme
 )
 
 
@@ -35,7 +34,7 @@ async def authentication(username: str, password: str, db: Session):
     return user
 
 
-async def login_for_access_token(form_data: OAuth2PasswordRequestForm, db: Session):
+async def login_for_access_token(form_data, db):
     user = await authentication(username=form_data.username, password=form_data.password, db=db)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = create_access_token(
@@ -47,11 +46,8 @@ async def login_for_access_token(form_data: OAuth2PasswordRequestForm, db: Sessi
 
     return {"access_token": access_token, "token_type": "bearer"}
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/token")
 
-
-# Getting user by token
-async def get_current_user_from_token(
+async def get_user_from_jwt(
         token: str = Depends(oauth2_scheme),
         db: Session = Depends(get_db)
 ):
@@ -68,7 +64,10 @@ async def get_current_user_from_token(
             raise token_exception
     except JWTError:
         raise token_exception
-
-    user = await get_user_by_name(data=username, db=db)
+    
+    user = db.query(User, Role).join(Role).filter(User.username == username).first()
+    role = user[1]
+    user = user[0]
+    user.role = role
 
     return user

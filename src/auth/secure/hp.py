@@ -8,4 +8,5 @@ def get_hashed_password(password: str):
 
 
 def verify_password(password: str, hashed_password: str):
+    print(password, hashed_password)
     return pwd_context.verify(password, hashed_password) 

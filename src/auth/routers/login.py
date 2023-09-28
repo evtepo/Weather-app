@@ -2,9 +2,9 @@ from fastapi import APIRouter, Depends
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
-from ..controllers.login import login_for_access_token, get_current_user_from_token
+from auth.controllers.login import login_for_access_token, get_user_from_jwt
 from database import get_db
-from .. import schemas
+from auth import schemas, models
 
 
 router = APIRouter(
@@ -19,9 +19,6 @@ async def access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Ses
     return await login_for_access_token(form_data=form_data, db=db)
 
 
-@router.get('/test_token')
-async def get_user_by_token(current_user: schemas.UserFull = Depends(get_current_user_from_token)):
-    return {
-        "Success": True,
-        "current_user": current_user
-    }
+@router.get('/user', response_model=schemas.UserFull)
+async def get_user_by_token(current_user: models.User = Depends(get_user_from_jwt)):
+    return current_user
