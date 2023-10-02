@@ -1,6 +1,11 @@
 from pydantic import BaseModel, EmailStr, Json
 
 
+class Weather(BaseModel):
+    Name: str
+    Weather: dict
+
+
 class Token(BaseModel):
     access_token: str
     token_type: str

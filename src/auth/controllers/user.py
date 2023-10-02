@@ -6,7 +6,7 @@ from sqlalchemy import or_
 
 from auth.models import User, Role
 from auth.schemas import UserCreate
-from auth.secure.hp import get_hashed_password, verify_password
+from auth.secure.hp import get_hashed_password
 from auth.controllers.login import authentication
 
 

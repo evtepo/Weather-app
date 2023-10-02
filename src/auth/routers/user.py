@@ -52,22 +52,22 @@ async def user_del(username: str, db: Session = Depends(get_db), current_user: m
     )
 
 
-@router.put('/change_name/{username}')
+@router.put('/change_name/{username}', status_code=201)
 async def new_name(new_name: str, db: Session = Depends(get_db), current_user: models.User = Depends(get_user_from_jwt)):
     return await change_name(user=current_user, new_name=new_name, db=db)
 
 
-@router.put('/change_email/{username}')
+@router.put('/change_email/{username}', status_code=201)
 async def new_email(new_email: EmailStr, db: Session = Depends(get_db), current_user: models.User = Depends(get_user_from_jwt)):
     return await change_email(user=current_user, email=new_email, db=db)
 
 
-@router.put('/change_password/{old_password}')
+@router.put('/change_password/{old_password}', status_code=201)
 async def new_pass(old_pass: str, new_pass: str, db: Session = Depends(get_db), current_user: models.User = Depends(get_user_from_jwt)):
     return await change_password(current_user=current_user, old_pass=old_pass, new_password=new_pass, db=db)
 
 
-@router.put('change_role/{username}')
+@router.put('change_role/{username}', status_code=201)
 async def change_role(username: str, role: int, db: Session = Depends(get_db), current_user: models.User = Depends(get_user_from_jwt)):
     if current_user.role.name == "admin":
         if role in (2, 3):
