@@ -14,11 +14,11 @@ router = APIRouter(
 
 
 # Handler for getting token
-@router.post('/login', response_model=schemas.Token)
+@router.post('/login', response_model=schemas.Token, status_code=201)
 async def access_token(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
     return await login_for_access_token(form_data=form_data, db=db)
 
 
-@router.get('/user', response_model=schemas.UserFull)
+@router.get('/user', response_model=schemas.UserFull, status_code=201)
 async def get_user_by_token(current_user: models.User = Depends(get_user_from_jwt)):
     return current_user

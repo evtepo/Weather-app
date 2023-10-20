@@ -37,7 +37,7 @@ async def authentication(username: str, password: str, db: Session):
 async def login_for_access_token(form_data, db):
     user = await authentication(username=form_data.username, password=form_data.password, db=db)
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = create_access_token(
+    access_token = await create_access_token(
         data={
             "sub": user.username,
         },
