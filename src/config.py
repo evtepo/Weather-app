@@ -24,4 +24,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
 YANDEX_WEATHER_API_KEY = os.environ.get("YANDEX_WEATHER_API_KEY")
 YANDEX_GEOCODER_API_KEY = os.environ.get("YANDEX_GEOCODER_API_KEY")
 
+# Token dependence
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login/login")
+
+# Redis
+REDIS_HOST = os.environ.get("REDIS_HOST")
+REDIS_PORT = os.environ.get("REDIS_PORT")
