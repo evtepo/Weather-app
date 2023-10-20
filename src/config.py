@@ -6,15 +6,21 @@ import os
 
 load_dotenv()
 
+DB_USER = os.environ.get("DB_USER")
+DB_PASSWORD = os.environ.get("DB_PASSWORD")
+DB_HOST = os.environ.get("DB_HOST")
+DB_PORT = os.environ.get("DB_PORT")
+DB_NAME = os.environ.get("DB_NAME")
+
 # Database
-DB_URL = os.environ.get("DB_URL")
+DB_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 # Token
 SECREY_KEY = os.environ.get("JWT_SECREY_KEY")
 ALGORITHM = os.environ.get("ALGORITHM")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get("ACCESS_TOKEN_EXPIRE_MINUTES"))
 
-# API keys from Yandex
+# API keys for Yandex
 YANDEX_WEATHER_API_KEY = os.environ.get("YANDEX_WEATHER_API_KEY")
 YANDEX_GEOCODER_API_KEY = os.environ.get("YANDEX_GEOCODER_API_KEY")
 
