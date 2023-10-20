@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from auth import models
 from auth.controllers.login import get_user_from_jwt
@@ -11,6 +12,7 @@ router = APIRouter(
 )
 
 @router.get('/{city}', response_model=Weather, status_code=201)
+@cache(expire=120)
 async def get_weather_by_city(city: str, current_user: models.User = Depends(get_user_from_jwt)):
     data = await get_cords(city)
     name, longitude, latitude = data.get("Name"), *data.get("Cords").split()

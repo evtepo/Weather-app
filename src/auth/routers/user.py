@@ -3,12 +3,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import EmailStr
 from sqlalchemy.orm import Session
 from starlette.status import HTTP_405_METHOD_NOT_ALLOWED
-
-from auth.controllers.login import get_user_from_jwt
+from fastapi_cache.decorator import cache
+import time
 
 from auth import schemas
 from auth import models
 from database import get_db
+from auth.controllers.login import get_user_from_jwt
 from auth.controllers.user import (
     change_email, change_password, change_user_role, meta_user, register, get_user_by_name, get_users,
     delete_user, change_name
@@ -21,6 +22,7 @@ router = APIRouter(
 
 
 @router.get('/all_users', response_model=List[schemas.UserFull], status_code=201)
+@cache(expire=360)
 async def get_all_users(db: Session = Depends(get_db), current_user: models.User = Depends(get_user_from_jwt)):
     return await get_users(db=db)
 

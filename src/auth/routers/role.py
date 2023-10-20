@@ -7,6 +7,8 @@ from auth.controllers.role import get_roles
 from database import get_db
 from auth import schemas, models
 
+from fastapi_cache.decorator import cache
+
 
 router = APIRouter(
     prefix='/role',
