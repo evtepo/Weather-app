@@ -17,6 +17,6 @@ jobs:
       - name: Install dependencies
         run: |
           python3 -m pip install --upgrade pip
-          pip isntall requirements.txt
+          pip install requirements.txt
       - name: Run flake8
         run: flake8 .
