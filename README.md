@@ -27,7 +27,7 @@ Token for authorization of users and administration (ALGORITHM - hashing algorit
 Keys for connecting to a third-party API for collecting weather data;
 
 4. Redis:  
-Connection to redis(For hashing weather data).
+Connection to redis(For caching weather data).
 
 ## Afterword
 I know that it is ***POSSIBLE*** to use the library FastAPI Users([link](https://fastapi-users.github.io/fastapi-users/12.1/)), but I would like to understand the construction and implementation of the registration, authorization and administration logic.
